@@ -1,10 +1,3 @@
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-import plotly.graph_objs as go
-import plotly.subplots as sp
-
 def read_file(filename):
     """ This function is used to read excel file and return dataframe """
     res = pd.read_csv(filename)
@@ -33,6 +26,23 @@ def line_plot(filename):
     plt.ylabel('Price', fontdict={'fontname': 'Comic Sans MS' , 'fontsize': 15})
     plt.legend()
     plt.show()
+    
+def get_estimated_price(filename, input_date):
+    """ This function returns the estimated gas price for a given date """
+    # Convert input date to datetime format
+    input_date = pd.to_datetime(input_date)
+
+    # Filter the data for the given date
+    filtered_data = filename[filename['Dates'] == input_date]
+
+    # Check if data exists for the given date
+    if filtered_data.empty:
+        return "No data available for the given date."
+
+    # Retrieve the price value
+    estimated_price = filtered_data['Prices'].values[0]
+
+    return estimated_price
 
 #read csv file
 data = read_file("Nat_Gas.csv")
@@ -48,3 +58,11 @@ data['Dates'] = pd.to_datetime(data['Dates'])
 data = data.sort_values('Dates')
 
 line_plot(data)
+
+
+# Take input date from the user
+input_date = input("Enter a date (YYYY-MM-DD): ")
+
+# Get the estimated price for the input date
+estimated_price = get_estimated_price(data, input_date)
+print("Estimated gas price for", input_date, "is", estimated_price)
